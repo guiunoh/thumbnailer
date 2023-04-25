@@ -4,7 +4,7 @@
 docker compose up -d
 
 # run api
-go run ./cmd/thumbnailer-api 
+go run ./cmd/thumbnailer
 ```
 
 * api test
