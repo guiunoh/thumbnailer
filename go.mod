@@ -13,8 +13,8 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.0.3
 	github.com/spf13/viper v1.15.0
-	github.com/stretchr/testify v1.8.1
-	golang.org/x/net v0.7.0
+	github.com/stretchr/testify v1.8.2
+	golang.org/x/net v0.9.0
 	gorm.io/driver/mysql v1.5.0
 	gorm.io/gorm v1.25.0
 )
@@ -54,8 +54,8 @@ require (
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
