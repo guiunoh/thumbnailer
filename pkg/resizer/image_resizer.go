@@ -2,19 +2,20 @@ package resizer
 
 import (
 	"bytes"
-	"github.com/disintegration/imaging"
 	"image"
 	"image/png"
+
+	"github.com/disintegration/imaging"
 )
 
 type imageResizer struct{}
 
-func NewImageResizer() ImageResizer {
+func NewImageResizer() Resizer {
 	return &imageResizer{}
 }
 
-func (r *imageResizer) Resize(src image.Image, rate float32) ([]byte, string, error) {
-	width := int(float32(src.Bounds().Dx()) * rate)
+func (r *imageResizer) Resize(src image.Image, rate Rate) ([]byte, string, error) {
+	width := int(float32(src.Bounds().Dx()) * rate.Value())
 	dst := imaging.Resize(src, width, 0, imaging.Lanczos)
 
 	buf := new(bytes.Buffer)
