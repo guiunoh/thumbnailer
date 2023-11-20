@@ -5,6 +5,6 @@
 ### VisualStudioCode ###
 .vscode/
 
-thumbnail.png
+thumbnail.*
 cover.html
-coverage.out
+*.png
