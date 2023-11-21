@@ -1,6 +1,5 @@
 [![github action](https://github.com/guiunoh/thumbnailer/actions/workflows/go.yml/badge.svg)](https://github.com/guiunoh/thumbnailer/actions/workflows/go.yml)
-![coverage](https://img.shields.io/endpoint?url=https://gist.github.com/guiunoh/cb32648fb86009af712ddf269c3a49c8/raw/thumbnailer-coverage-badge.json)
-
+![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/guiunoh/cb32648fb86009af712ddf269c3a49c8/raw/thumbnailer-coverage-badge.json)
 
 
 * run
