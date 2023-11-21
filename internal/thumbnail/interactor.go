@@ -7,17 +7,17 @@ import (
 	"thumbnailer/pkg/ulid"
 )
 
-func NewInteractor(r Repository, resizer resizer.ImageResizer) Usecase {
+func NewInteractor(r Repository, resizer resizer.Resizer) Usecase {
 	return &interactor{r, resizer}
 }
 
 type interactor struct {
 	repo    Repository
-	resizer resizer.ImageResizer
+	resizer resizer.Resizer
 }
 
-func (i interactor) CreateThumbnail(c context.Context, src image.Image, rate Rate) (*Thumbnail, error) {
-	resized, imageType, err := i.resizer.Resize(src, rate.Value())
+func (i interactor) CreateThumbnail(c context.Context, src image.Image, rate resizer.Rate) (*Thumbnail, error) {
+	resized, imageType, err := i.resizer.Resize(src, rate)
 	if err != nil {
 		return nil, err
 	}

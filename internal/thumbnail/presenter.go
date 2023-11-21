@@ -10,7 +10,6 @@ import (
 
 type Presenter interface {
 	GetOnOK(c *gin.Context, t Thumbnail)
-	GetManyOK(c *gin.Context, t Thumbnail)
 	Created(c *gin.Context, t Thumbnail)
 	BadRequest(c *gin.Context, err error)
 	InternalServerError(c *gin.Context, err error)
@@ -24,21 +23,7 @@ type presenter struct {
 }
 
 func (p presenter) GetOnOK(c *gin.Context, t Thumbnail) {
-	c.JSON(
-		http.StatusOK,
-		gin.H{
-			"result": t,
-		},
-	)
-}
-
-func (p presenter) GetManyOK(c *gin.Context, t Thumbnail) {
-	c.JSON(
-		http.StatusOK,
-		gin.H{
-			"result": t,
-		},
-	)
+	c.Data(http.StatusOK, t.Type, t.Data)
 }
 
 func (p presenter) Created(c *gin.Context, t Thumbnail) {

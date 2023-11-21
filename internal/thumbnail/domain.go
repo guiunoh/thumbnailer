@@ -3,6 +3,7 @@ package thumbnail
 import (
 	"context"
 	"image"
+	"thumbnailer/pkg/resizer"
 	"thumbnailer/pkg/ulid"
 )
 
@@ -12,6 +13,6 @@ type Repository interface {
 }
 
 type Usecase interface {
-	CreateThumbnail(c context.Context, src image.Image, rate Rate) (*Thumbnail, error)
+	CreateThumbnail(c context.Context, src image.Image, rate resizer.Rate) (*Thumbnail, error)
 	GetThumbnail(c context.Context, id ulid.ID) (*Thumbnail, error)
 }
