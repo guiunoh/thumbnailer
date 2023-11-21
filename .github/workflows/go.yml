@@ -55,7 +55,7 @@ jobs:
         TOKENS="$(go tool cover -func=coverage.out | tail -n 1 | awk '{print $3}')"
         echo "COVERAGE=$(echo ${TOKENS})" >> $GITHUB_ENV
 
-    - name: Create Coverage Badge
+    - name: upload coverage badge
       uses: schneegans/dynamic-badges-action@v1.1.0
       with:
         auth: ${{ secrets.GIST_COVERAGE_SECRET }}
