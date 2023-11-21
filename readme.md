@@ -23,3 +23,14 @@ http GET http://localhost:8080$(http -f post http://localhost:8080/api/v1/thumbn
 ```
 
 
+
+```
+![coverage badge](https://gist.githubusercontent.com/guiunoh/cb32648fb86009af712ddf269c3a49c8/raw/de8a4a23d1e7e1535f97adc70a999dde1ef2c124/thumbnailer-coverage-badge.json)
+
+![coverage badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/guiunoh/cb32648fb86009af712ddf269c3a49c8/raw/de8a4a23d1e7e1535f97adc70a999dde1ef2c124/thumbnailer-coverage-badge.json)
+
+
+![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/guiunoh/cb32648fb86009af712ddf269c3a49c8/raw/274b14fd50ae3f59558b7326df3c0e9b86521918/thumbnailer-coverage-badge.json)
+
+```
+

@@ -5,6 +5,10 @@
 coverage:
 	go test -cover -count=1 ./...
 
+coverage-action:
+	go test -coverprofile=coverage.out -count=1 ./... 
+	go tool cover -func=coverage.out | tail -n 1 | awk '{print $3}'
+
 test:
 	go test -count=1 ./...
 

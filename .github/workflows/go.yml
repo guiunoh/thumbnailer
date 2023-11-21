@@ -37,8 +37,33 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-  echo:
-    needs: [build, test]
+  coverage:
     runs-on: ubuntu-latest
+    env:
+      COVERAGE: 0.0%
     steps:
-    - run: echo "complete"
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version-file: go.mod
+
+    - name: Coverage
+      run: |
+        go test -coverprofile=coverage.out -count=1 ./... 
+        SUMMARY="$(go tool cover -func=coverage.out | tail -n 1 | awk '{print $3}')"
+        TOKENS=($SUMMARY)
+        echo "COVERAGE=$(echo ${TOKENS[2]})" >> $GITHUB_ENV
+
+    - name: Create Coverage Badge
+      uses: schneegans/dynamic-badges-action@v1.1.0
+      with:
+        auth: ${{ secrets.GIST_COVERAGE_SECRET }}
+        gistID: cb32648fb86009af712ddf269c3a49c8
+        filename: thumbnailer-coverage-badge.json
+        label: coverage
+        message: ${{ env.COVERAGE }}
+        namedLogo: github
+        color: blue
+        logoColor: lightblue
