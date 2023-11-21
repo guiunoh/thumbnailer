@@ -5,6 +5,9 @@
 ### VisualStudioCode ###
 .vscode/
 
-thumbnail.*
 cover.html
 *.png
+coverage.out
+sqlite.db
+-- *.sql
+thumbnailer.db

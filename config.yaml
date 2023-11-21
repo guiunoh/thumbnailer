@@ -1,0 +1,14 @@
+profile: local
+service:
+    port: 8080
+# db:
+#     driver: mysql
+#     host: localhost
+#     port: 3306
+#     name: thumbnailer
+#     user: thumbnailer
+#     password: pass!@
+#     timeZone: Local
+db:
+    driver: sqlite3
+    name: thumbnailer

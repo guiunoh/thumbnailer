@@ -1,24 +1,48 @@
 package main
 
 import (
-	"thumbnailer/cmd/thumbnailer/bootstrap"
-	_gin "thumbnailer/infrastructure/gin"
-	_redis "thumbnailer/infrastructure/redis"
+	"thumbnailer/infrastructure/database"
+	"thumbnailer/infrastructure/engine"
+	"thumbnailer/internal/delivery/http"
+	"thumbnailer/internal/entity"
+	"thumbnailer/internal/repository"
+	"thumbnailer/internal/usecase/thumbnail"
+	"thumbnailer/pkg/resizer"
+	"time"
 
-	"github.com/gin-contrib/requestid"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	engine := gin.Default()
-	engine.MaxMultipartMemory = 4 << 20 // 4 MiB
+	cfg := Config()
 
-	rdb := _redis.NewClient(bootstrap.Config.RDB)
-	defer rdb.Close()
+	// ready database
+	db := database.NewDatabase(cfg.DB)
+	defer db.Close()
 
-	engine.Use(requestid.New())
-	engine.Use(_gin.MiddlewarePing("/ping"))
+	// database migration
+	db.DB().AutoMigrate(
+		&entity.Thumbnail{},
+	)
 
-	bootstrap.Setup(engine, rdb)
-	engine.Run()
+	// ready engine
+	e := engine.NewGin()
+	route(e.Group("/api/v1"), db)
+
+	srv := engine.Serve(e, cfg.Service.Port)
+	e.Use(engine.Ping("/ping"))
+	engine.Monitor(e, cfg.Service.Port+1, "/metrics")
+
+	// wait shutdown
+	engine.Shutdown(srv, 5*time.Second)
+}
+
+func route(r gin.IRouter, db database.Database) {
+	// thumbnail
+	func(r gin.IRouter, db database.Database) {
+		repository := repository.NewThumbnail(db)
+		usecase := thumbnail.NewInteractor(repository, resizer.NewResizer())
+		presenter := http.NewThumbnailPresenter()
+		http.NewThumbnailHandler(usecase, presenter).Route(r)
+	}(r, db)
 }

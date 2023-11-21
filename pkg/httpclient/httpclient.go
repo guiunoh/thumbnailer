@@ -36,9 +36,7 @@ func NewHTTPClientWithSettings(httpSettings HTTPClientSettings) *http.Client {
 	}
 
 	// So client makes HTTP/2 requests
-	if err := http2.ConfigureTransport(tr); err != nil {
-		return nil
-	}
+	http2.ConfigureTransport(tr)
 
 	return &http.Client{
 		Transport: tr,

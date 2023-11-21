@@ -58,13 +58,14 @@ jobs:
         echo "COVERAGE=$(echo ${TOKENS})" >> $GITHUB_ENV
 
     - name: upload coverage badge
-      uses: schneegans/dynamic-badges-action@v1.1.0
+      uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_COVERAGE_SECRET }}
         gistID: cb32648fb86009af712ddf269c3a49c8
         filename: thumbnailer-coverage-badge.json
         label: coverage
         message: ${{ env.COVERAGE }}
-        namedLogo: github
-        color: blue
-        logoColor: lightblue
+        namedLogo: go
+        valColorRange: ${{ env.COVERAGE }}
+        minColorRange: 0
+        maxColorRange: 90
