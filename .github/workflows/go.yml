@@ -53,7 +53,7 @@ jobs:
       run: |
         go test -coverprofile=coverage.out -count=1 ./... 
         SUMMARY="$(go tool cover -func=coverage.out | tail -n 1 | awk '{print $3}')"
-        TOKENS=($SUMMARY)
+        TOKENS=($SUMMARY
         echo "COVERAGE=$(echo ${TOKENS[2]})" >> $GITHUB_ENV
 
     - name: Create Coverage Badge
