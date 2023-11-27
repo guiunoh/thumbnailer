@@ -3,7 +3,6 @@ package entity
 import (
 	"database/sql/driver"
 	"fmt"
-	"strings"
 
 	"github.com/goccy/go-json"
 	"github.com/oklog/ulid/v2"
@@ -17,10 +16,6 @@ func NewID() ID {
 }
 
 func Parse(v string) (ID, error) {
-	if len(v) == 0 || strings.Compare(v, "0") == 0 {
-		return ID(ulid.ULID{}), nil
-	}
-
 	id, err := ulid.Parse(v)
 	return ID(id), err
 }

@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -20,13 +19,4 @@ func NewThumbnail(data []byte, imageType string) *Thumbnail {
 		Type:   imageType,
 		Expiry: time.Now().Add(expiry),
 	}
-}
-
-func (e Thumbnail) Key() string {
-	return fmt.Sprintf("%s:%s", e.TableName(), e.ID.String())
-}
-
-// TableName Tabler interface
-func (e Thumbnail) TableName() string {
-	return "thumbnail"
 }
