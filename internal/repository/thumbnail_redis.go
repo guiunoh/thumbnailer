@@ -12,19 +12,19 @@ import (
 )
 
 func NewThumbnailRedis(rdb *redis.Client) thumbnail.Repository {
-	return &redisRepository{rdb, "thumbnail"}
+	return &thumbnailRedisRepository{rdb, "thumbnail"}
 }
 
-type redisRepository struct {
+type thumbnailRedisRepository struct {
 	rdb    *redis.Client
 	prefix string
 }
 
-func (r *redisRepository) key(id entity.ID) string {
+func (r *thumbnailRedisRepository) key(id entity.ID) string {
 	return fmt.Sprintf("%s:%s", r.prefix, id.String())
 }
 
-func (r *redisRepository) Save(ctx context.Context, entity *entity.Thumbnail) error {
+func (r *thumbnailRedisRepository) Save(ctx context.Context, entity *entity.Thumbnail) error {
 	key := r.key(entity.ID)
 	value, err := json.Marshal(entity)
 	if err != nil {
@@ -40,7 +40,7 @@ func (r *redisRepository) Save(ctx context.Context, entity *entity.Thumbnail) er
 	return nil
 }
 
-func (r *redisRepository) FetchOne(ctx context.Context, id entity.ID) (*entity.Thumbnail, error) {
+func (r *thumbnailRedisRepository) FetchOne(ctx context.Context, id entity.ID) (*entity.Thumbnail, error) {
 	key := r.key(id)
 	value, err := r.rdb.Get(ctx, key).Bytes()
 	if err != nil {

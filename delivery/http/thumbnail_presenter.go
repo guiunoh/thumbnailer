@@ -9,14 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Presenter interface {
+type ThumbnailPresenter interface {
 	GetOnOK(c *gin.Context, t entity.Thumbnail)
 	Created(c *gin.Context, t entity.Thumbnail)
 	BadRequest(c *gin.Context, err error)
 	InternalServerError(c *gin.Context, err error)
 }
 
-func NewThumbnailPresenter() Presenter {
+func NewThumbnailPresenter() ThumbnailPresenter {
 	return &presenter{}
 }
 

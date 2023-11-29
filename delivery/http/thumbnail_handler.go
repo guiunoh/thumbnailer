@@ -11,13 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Handler interface {
+type ThumbnailHandler interface {
 	Route(r gin.IRoutes)
 	GetOne(c *gin.Context)
 	Post(c *gin.Context)
 }
 
-func NewThumbnailHandler(u thumbnail.Usecase, p Presenter) Handler {
+func NewThumbnailHandler(u thumbnail.Usecase, p ThumbnailPresenter) ThumbnailHandler {
 	return &handler{
 		usecase:   u,
 		presenter: p,
@@ -26,7 +26,7 @@ func NewThumbnailHandler(u thumbnail.Usecase, p Presenter) Handler {
 
 type handler struct {
 	usecase   thumbnail.Usecase
-	presenter Presenter
+	presenter ThumbnailPresenter
 }
 
 func (h handler) Route(r gin.IRoutes) {

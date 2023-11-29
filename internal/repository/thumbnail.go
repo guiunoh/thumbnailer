@@ -10,14 +10,14 @@ import (
 )
 
 func NewThumbnail(db database.Database) thumbnail.Repository {
-	return &repo{db.DB()}
+	return &thumbnailRepository{db.DB()}
 }
 
-type repo struct {
+type thumbnailRepository struct {
 	db *gorm.DB
 }
 
-func (r *repo) FetchOne(ctx context.Context, id entity.ID) (*entity.Thumbnail, error) {
+func (r *thumbnailRepository) FetchOne(ctx context.Context, id entity.ID) (*entity.Thumbnail, error) {
 	var entity entity.Thumbnail
 
 	if err := r.db.Where("id=?", id).First(&entity).Error; err != nil {
@@ -27,7 +27,7 @@ func (r *repo) FetchOne(ctx context.Context, id entity.ID) (*entity.Thumbnail, e
 	return &entity, nil
 }
 
-func (r *repo) Save(ctx context.Context, thumbnail *entity.Thumbnail) error {
+func (r *thumbnailRepository) Save(ctx context.Context, thumbnail *entity.Thumbnail) error {
 	if err := r.db.Create(thumbnail).Error; err != nil {
 		return err
 	}
