@@ -7,7 +7,8 @@ ARG package=.
 WORKDIR /build
 COPY . .
 RUN go mod tidy
-RUN CGO_ENABLED=0 go build -tags=jsoniter -a -ldflags '-w -s' -o main ${package}
+RUN CGO_ENABLED=1 go build -tags=jsoniter -a -ldflags '-w -s -linkmode external -extldflags "-static"' -o main ${package}
+# RUN CGO_ENABLED=0 go build -tags=jsoniter -a -ldflags '-w -s' -o main ${package}
 
 ##
 ## deploy
@@ -27,7 +28,7 @@ WORKDIR $HOME
 
 COPY --from=builder /build/main .
 COPY --from=builder /build/config/config*.yaml ./config/
-COPY --from=builder /build/entrypoint.sh .
+COPY --from=builder /build/deployments/entrypoint.sh .
 
 RUN sudo chown -R $USER:$USER $HOME
 RUN chmod +x ./entrypoint.sh

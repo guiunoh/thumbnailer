@@ -1,6 +1,9 @@
 package main
 
 import (
+	"io"
+	"log/slog"
+	"os"
 	"thumbnailer/infrastructure/database"
 	"thumbnailer/infrastructure/engine"
 	"thumbnailer/internal/delivery/http"
@@ -11,13 +14,15 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/natefinch/lumberjack"
 )
 
 func main() {
-	cfg := Config()
+	config := loadConfig()
+	log(config)
 
 	// ready database
-	db := database.NewDatabase(cfg.DB)
+	db := database.NewDatabase(config.DB)
 	defer db.Close()
 
 	// database migration
@@ -27,14 +32,19 @@ func main() {
 
 	// ready engine
 	e := engine.NewGin()
-	route(e.Group("/api/v1"), db)
+	r := e.Group("/api/v1")
 
-	srv := engine.Serve(e, cfg.Service.Port)
-	e.Use(engine.Ping("/ping"))
-	engine.Monitor(e, cfg.Service.Port+1, "/metrics")
+	e.Ping("/ping")
+	e.Monitor(config.Monitor.Port, config.Monitor.Path)
+
+	route(r, db)
+	e.Serve(config.Service.Port)
+	slog.Info("thumbnailer service starting...", "port", config.Service.Port)
 
 	// wait shutdown
-	engine.Shutdown(srv, 5*time.Second)
+	timeout := 5 * time.Second
+	e.Shutdown(timeout)
+	slog.Info("thumbnailer service shutdown", "timeout", timeout)
 }
 
 func route(r gin.IRouter, db database.Database) {
@@ -45,4 +55,23 @@ func route(r gin.IRouter, db database.Database) {
 		presenter := http.NewThumbnailPresenter()
 		http.NewThumbnailHandler(usecase, presenter).Route(r)
 	}(r, db)
+}
+
+func log(config Config) {
+	var l slog.Level
+	if err := l.UnmarshalText([]byte(config.Log.Level)); err != nil {
+		panic(err)
+	}
+
+	multi := io.MultiWriter(
+		os.Stdout,
+		&lumberjack.Logger{
+			Filename:   config.Log.Path,
+			MaxSize:    config.Log.MaxSize, // mb
+			MaxBackups: config.Log.MaxBackups,
+			MaxAge:     config.Log.MaxAge, // days
+		},
+	)
+
+	slog.SetDefault(slog.New(slog.NewTextHandler(multi, &slog.HandlerOptions{Level: l})))
 }

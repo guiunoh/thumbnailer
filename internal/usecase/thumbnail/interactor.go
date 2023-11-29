@@ -3,6 +3,7 @@ package thumbnail
 import (
 	"context"
 	"image"
+	"log/slog"
 	"thumbnailer/internal/entity"
 	"thumbnailer/pkg/resizer"
 
@@ -24,6 +25,7 @@ type interactor struct {
 }
 
 func (i interactor) CreateThumbnail(c context.Context, src image.Image, rate resizer.Rate) (*entity.Thumbnail, error) {
+	slog.Debug("thumbnailer: create thumbnail")
 	resized, imageType, err := i.resizer.Resize(src, rate)
 	if err != nil {
 		return nil, err

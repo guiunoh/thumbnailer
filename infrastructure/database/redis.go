@@ -12,11 +12,11 @@ type RedisConfig struct {
 	DB       int    `yaml:"db"`
 }
 
-func NewClient(cfg RedisConfig) *redis.Client {
+func NewClient(config RedisConfig) *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     cfg.Endpoint,
-		Password: cfg.Password,
-		DB:       cfg.DB,
+		Addr:     config.Endpoint,
+		Password: config.Password,
+		DB:       config.DB,
 	})
 
 	_, err := client.Ping(context.Background()).Result()

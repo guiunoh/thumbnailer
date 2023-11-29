@@ -4,27 +4,25 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
 func Config(config interface{}, name string) {
-	v := viper.New()
-	v.AddConfigPath(".")
-	v.AddConfigPath("./config")
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("./config")
 
 	ext := filepath.Ext(name)
-	v.SetConfigName(strings.TrimSuffix(name, ext))
-	v.SetConfigType(ext[1:])
+	viper.SetConfigName(strings.TrimSuffix(name, ext))
+	viper.SetConfigType(ext[1:])
 
-	if err := v.ReadInConfig(); err != nil {
-		panic(errors.Wrap(err, "failed read config"))
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
 	}
 
-	v.AutomaticEnv()
-	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	if err := v.Unmarshal(config); err != nil {
-		panic(errors.Wrap(err, "failed read config"))
+	if err := viper.Unmarshal(config); err != nil {
+		panic(err)
 	}
 }

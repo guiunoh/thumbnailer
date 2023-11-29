@@ -13,14 +13,15 @@ run:
 
 dockerize:
 	docker build \
+	--file ./deployments/Dockerfile \
 	--tag thumbnailer \
-	--build-arg package=./cmd/thumbnailer-api \
+	--build-arg package=./cmd/thumbnailer \
 	--build-arg config=config.yaml \
 	.
 
 run-docker:
 	docker run -d --rm -it \
-	-p 8080:8080 -p 9090:9090 \
+	-p 8080:8080 -p 9090:8081 \
 	thumbnailer
 
 run-docker-with-mount:
