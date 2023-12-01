@@ -11,7 +11,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func NewThumbnailRedis(rdb *redis.Client) thumbnail.Repository {
+func NewThumbnailRedisRepository(rdb *redis.Client) thumbnail.Repository {
 	return &thumbnailRedisRepository{rdb, "thumbnail"}
 }
 

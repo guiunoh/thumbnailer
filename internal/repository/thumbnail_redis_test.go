@@ -24,7 +24,7 @@ var (
 func TestThumbnailRepositoryRedisSave(t *testing.T) {
 	c := context.TODO()
 	rdb, mock := redismock.NewClientMock()
-	repo := repository.NewThumbnailRedis(rdb)
+	repo := repository.NewThumbnailRedisRepository(rdb)
 
 	value, err := json.Marshal(expected)
 	assert.NoError(t, err)
@@ -40,7 +40,7 @@ func TestThumbnailRepositoryRedisSave(t *testing.T) {
 func TestThumbnailRepositoryRedisFindByID(t *testing.T) {
 	c := context.TODO()
 	rdb, mock := redismock.NewClientMock()
-	repo := repository.NewThumbnailRedis(rdb)
+	repo := repository.NewThumbnailRedisRepository(rdb)
 
 	expectedJSON, err := json.Marshal(expected)
 	assert.NoError(t, err)
@@ -61,7 +61,7 @@ func TestThumbnailRepositoryRedisFindByID(t *testing.T) {
 func TestThumbnailRepositoryRedisQueryOne_Nil(t *testing.T) {
 	c := context.TODO()
 	rdb, mock := redismock.NewClientMock()
-	repo := repository.NewThumbnailRedis(rdb)
+	repo := repository.NewThumbnailRedisRepository(rdb)
 
 	mock.ExpectGet("thumbnail:" + expected.ID.String()).RedisNil()
 

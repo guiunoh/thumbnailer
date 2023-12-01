@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewThumbnail(db database.Database) thumbnail.Repository {
+func NewThumbnailRepository(db database.Database) thumbnail.Repository {
 	return &thumbnailRepository{db.DB()}
 }
 
