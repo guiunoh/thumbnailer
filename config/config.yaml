@@ -1,25 +1,22 @@
-# db:
-#   driver: mysql
-#   host: localhost
-#   port: 3306
-#   name: thumbnailer
-#   user: thumbnailer
-#   password: pass!@
-#   charset: utf8mb4
-#   timeZone: Local
-profile: local
 service:
+  id: thumbnailer
+
+server:
   port: 8080
+  ping: /ping
+
 monitor:
-  port: 8081
-  path: metrics
-db:
-    driver: sqlite3
-    name: thumbnailer
+  port: 9090
+  path: /metrics
+
+sqldb:
+  # dsn: file::memory:?cache=shared
+  dsn: thumbnailer.db
+  batchSize: 100
+
 log:
   level: debug
-  path: ./logs/app.log
+  path: ./logs/thumbnailer.log
   maxSize: 100
   maxBackups: 10
   maxAge: 30
-

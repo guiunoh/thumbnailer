@@ -6,17 +6,11 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type RedisConfig struct {
-	Endpoint string `yaml:"endpoint"`
-	Password string `yaml:"password"`
-	DB       int    `yaml:"db"`
-}
-
-func NewClient(config RedisConfig) *redis.Client {
+func NewRedis(addr, pass string, db int) *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     config.Endpoint,
-		Password: config.Password,
-		DB:       config.DB,
+		Addr:     addr,
+		Password: pass,
+		DB:       db,
 	})
 
 	_, err := client.Ping(context.Background()).Result()
@@ -25,8 +19,4 @@ func NewClient(config RedisConfig) *redis.Client {
 	}
 
 	return client
-}
-
-func CloseClient(client *redis.Client) {
-	defer client.Close()
 }

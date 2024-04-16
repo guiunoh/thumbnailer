@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"thumbnailer/pkg/httpclient"
 
+	"github.com/guiunoh/thumbnailer/pkg/httpclient"
 	"github.com/stretchr/testify/assert"
 )
 

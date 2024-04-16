@@ -1,33 +1,23 @@
-package http
+package delivery
 
 import (
 	"fmt"
 	"net/http"
-	"thumbnailer/internal/entity"
 	"time"
+
+	"github.com/guiunoh/thumbnailer/internal/thumbnail"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ThumbnailPresenter interface {
-	GetOnOK(c *gin.Context, t entity.Thumbnail)
-	Created(c *gin.Context, t entity.Thumbnail)
-	BadRequest(c *gin.Context, err error)
-	InternalServerError(c *gin.Context, err error)
+type thumbnailPresenter struct {
 }
 
-func NewThumbnailPresenter() ThumbnailPresenter {
-	return &presenter{}
-}
-
-type presenter struct {
-}
-
-func (p presenter) GetOnOK(c *gin.Context, t entity.Thumbnail) {
+func (p thumbnailPresenter) GetOnOK(c *gin.Context, t thumbnail.Thumbnail) {
 	c.Data(http.StatusOK, t.Type, t.Data)
 }
 
-func (p presenter) Created(c *gin.Context, t entity.Thumbnail) {
+func (p thumbnailPresenter) Created(c *gin.Context, t thumbnail.Thumbnail) {
 	if t.Expiry.After(time.Now()) {
 		maxAge := int(time.Until(t.Expiry).Seconds())
 		c.Writer.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", maxAge))
@@ -44,7 +34,7 @@ func (p presenter) Created(c *gin.Context, t entity.Thumbnail) {
 	)
 }
 
-func (p presenter) BadRequest(c *gin.Context, err error) {
+func (p thumbnailPresenter) BadRequest(c *gin.Context, err error) {
 	c.AbortWithStatusJSON(
 		http.StatusBadRequest,
 		gin.H{
@@ -53,7 +43,7 @@ func (p presenter) BadRequest(c *gin.Context, err error) {
 	)
 }
 
-func (p presenter) InternalServerError(c *gin.Context, err error) {
+func (p thumbnailPresenter) InternalServerError(c *gin.Context, err error) {
 	c.AbortWithStatusJSON(
 		http.StatusInternalServerError,
 		gin.H{

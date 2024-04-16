@@ -1,39 +1,47 @@
 package main
 
 import (
-	"log/slog"
-	"thumbnailer/infrastructure/database"
-	"thumbnailer/infrastructure/engine"
-	"thumbnailer/internal/entity"
-	"time"
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+	delivery "github.com/guiunoh/thumbnailer/delivery/http"
+	"github.com/guiunoh/thumbnailer/infrastructure/database"
+	_gin "github.com/guiunoh/thumbnailer/infrastructure/gin"
+	"github.com/guiunoh/thumbnailer/internal/thumbnail"
+	"github.com/guiunoh/thumbnailer/pkg/resizer"
+	"gorm.io/gorm"
 )
 
 func main() {
-	config := loadConfig()
-	log(config)
+	cfg := config()
 
-	// ready database
-	db := database.NewDatabase(config.DB)
+	sqldb := database.NewSQL(cfg.SqlDB.DSN, cfg.SqlDB.BatchSize)
+	db, err := sqldb.DB()
+	if err != nil {
+		panic(err)
+	}
 	defer db.Close()
 
-	// database migration
-	if err := db.DB().AutoMigrate(
-		&entity.Thumbnail{},
+	// migration
+	if err := sqldb.AutoMigrate(
+		&thumbnail.Thumbnail{},
 	); err != nil {
 		panic(err)
 	}
 
-	// ready engine
-	e := engine.NewGin()
-	e.Ping("/ping")
-	e.Monitor(config.Monitor.Port, config.Monitor.Path)
+	r := gin.Default()
+	r.Use(_gin.Ping(cfg.Server.Ping))
+	_gin.Monitor(r, fmt.Sprintf(":%d", cfg.Monitor.Port))
 
-	route(e.Group("/api/v1"), db)
-	e.Serve(config.Service.Port)
-	slog.Info("thumbnailer service starting...", "port", config.Service.Port)
+	setup(r.Group(fmt.Sprintf("/%s/api/v1", cfg.Service.ID)), sqldb)
 
-	// wait shutdown
-	timeout := 5 * time.Second
-	e.Shutdown(timeout)
-	slog.Info("thumbnailer service shutdown", "timeout", timeout)
+	server := _gin.Serve(r, fmt.Sprintf(":%d", cfg.Server.Port))
+	_gin.Shutdown(server)
+
+}
+
+func setup(r gin.IRouter, sqldb *gorm.DB) {
+	repo := thumbnail.NewRepository(sqldb)
+	u := thumbnail.NewUsecase(repo, resizer.NewResizer())
+	delivery.NewThumbnailHandler(u).Route(r)
 }

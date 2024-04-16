@@ -1,0 +1,14 @@
+.git/
+.gitignore
+.github/
+
+.vscode/
+.idea/
+.dockerignore
+Dockerfile
+Makefile
+readme.md
+
+logs/
+*.db
+*.png

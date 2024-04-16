@@ -13,17 +13,15 @@ go run ./cmd/thumbnailer
 
 * api test
 ```bash
-http -f post http://localhost:8080/api/v1/thumbnails file@$PWD/test/sample.jpg rate=RATE50 | jq -r '.id'
-  
+http -f post http://localhost:8080/thumbnailer/api/v1/thumbnails file@$PWD/test/sample.jpg rate=RATE50 | jq -r '.id'
 
-http -f post http://localhost:8080/api/v1/thumbnails file@$PWD/test/sample.jpg rate=RATE50 \
+http -f post http://localhost:8080/thumbnailer/api/v1/thumbnails file@$PWD/test/sample.jpg rate=RATE50 \
   | jq -r '.id' \
-  | xargs -I {} sh -c 'http get http://localhost:8080/api/v1/thumbnails/{} -o {}.png'
+  | xargs -I {} sh -c 'http http://localhost:8080/thumbnailer/api/v1/thumbnails/{} -o {}.png'
 
-http GET http://localhost:8080$(http -f post http://localhost:8080/api/v1/thumbnails file@$PWD/test/sample.jpg rate=RATE50 --headers \
+http http://localhost:8080$(http -f post http://localhost:8080/thumbnailer/api/v1/thumbnails file@$PWD/test/sample.jpg rate=RATE50 --headers \
   | grep -i '^Location:' \
   | awk '{print $2}' | tr -d '\r' \
-)
+) -o output.png
 
 ```
- 

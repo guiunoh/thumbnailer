@@ -6,7 +6,7 @@ import (
 	"image/png"
 	"testing"
 
-	"thumbnailer/pkg/resizer"
+	"github.com/guiunoh/thumbnailer/pkg/resizer"
 )
 
 func TestResizer_Resize(t *testing.T) {

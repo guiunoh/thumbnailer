@@ -1,12 +1,13 @@
-package http
+package delivery
 
 import (
 	"fmt"
 	"image"
 	"mime/multipart"
-	"thumbnailer/internal/entity"
-	"thumbnailer/internal/usecase/thumbnail"
-	"thumbnailer/pkg/resizer"
+
+	"github.com/google/uuid"
+	"github.com/guiunoh/thumbnailer/internal/thumbnail"
+	"github.com/guiunoh/thumbnailer/pkg/resizer"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,26 +18,26 @@ type ThumbnailHandler interface {
 	Post(c *gin.Context)
 }
 
-func NewThumbnailHandler(u thumbnail.Usecase, p ThumbnailPresenter) ThumbnailHandler {
-	return &handler{
+func NewThumbnailHandler(u thumbnail.Usecase) ThumbnailHandler {
+	return &thumbnailHandler{
 		usecase:   u,
-		presenter: p,
+		presenter: thumbnailPresenter{},
 	}
 }
 
-type handler struct {
+type thumbnailHandler struct {
 	usecase   thumbnail.Usecase
-	presenter ThumbnailPresenter
+	presenter thumbnailPresenter
 }
 
-func (h handler) Route(r gin.IRoutes) {
+func (h thumbnailHandler) Route(r gin.IRoutes) {
 	r.GET("/thumbnails/:id", h.GetOne)
 	r.POST("/thumbnails", h.Post)
 }
 
-func (h handler) GetOne(c *gin.Context) {
+func (h thumbnailHandler) GetOne(c *gin.Context) {
 	var input struct {
-		ID string `uri:"id" binding:"required"`
+		ID string `uri:"id" binding:"required,uuid"`
 	}
 
 	if err := c.ShouldBindUri(&input); err != nil {
@@ -44,12 +45,7 @@ func (h handler) GetOne(c *gin.Context) {
 		return
 	}
 
-	id, err := entity.Parse(input.ID)
-	if err != nil {
-		h.presenter.InternalServerError(c, err)
-		return
-	}
-
+	id := uuid.MustParse(input.ID)
 	output, err := h.usecase.GetThumbnail(c.Request.Context(), id)
 	if err != nil {
 		h.presenter.InternalServerError(c, err)
@@ -59,7 +55,7 @@ func (h handler) GetOne(c *gin.Context) {
 	h.presenter.GetOnOK(c, *output)
 }
 
-func (h handler) Post(c *gin.Context) {
+func (h thumbnailHandler) Post(c *gin.Context) {
 	var input struct {
 		Rate string                `form:"rate" binding:"required"`
 		File *multipart.FileHeader `form:"file" binding:"required"`
@@ -102,11 +98,6 @@ func (h handler) Post(c *gin.Context) {
 	// check format
 	if format != "png" && format != "jpeg" {
 		h.presenter.BadRequest(c, fmt.Errorf("unsupported format: %s", format))
-		return
-	}
-
-	if err != nil {
-		h.presenter.InternalServerError(c, err)
 		return
 	}
 
